@@ -1,0 +1,10 @@
+[Unit]
+Description=Fetch events from gcal and store them in a file - 3 min after boot and every quarter hour (xx:00, xx:15, ...)
+
+[Timer]
+Persistent=true
+OnBootSec=3min
+OnCalendar=*-*-* *:0,15,30,45:00
+
+[Install]
+WantedBy=timers.target
