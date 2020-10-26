@@ -1,0 +1,9 @@
+utc_offset: 1
+
+output_path: "output/gcal-conky-today.txt"
+
+pickle_path: "configuration/credentials.pickle"
+credentials_path: "configuration/credentials.json"
+
+calendars:
+ - primary
