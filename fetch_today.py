@@ -6,9 +6,8 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-from helper import print_to_file, get_absolute_path
-
-from configuration import Configuration
+from gcal_conky.helper import print_to_file, get_absolute_path
+from gcal_conky.configuration import Configuration
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -39,6 +38,15 @@ def get_creds(config: Configuration):
     return creds
 
 
+def get_start_of_day(config: Configuration):
+    # return only events that start before midnight
+    start = datetime.utcnow()
+    start = start.replace(hour=0, minute=0, second=0, microsecond=0)
+    start = start + timedelta(hours=config.get('utc_offset'))
+    start = start.isoformat() + "Z"
+    return start
+
+
 def get_end_of_day(config: Configuration):
     # return only events that start before midnight
     end = datetime.utcnow() + timedelta(days=1)
@@ -57,7 +65,8 @@ def main():
 
     service = build('calendar', 'v3', credentials=creds)
 
-    start = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    # start = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    start = get_start_of_day(config)
     end = get_end_of_day(config)
 
     events = []

@@ -31,7 +31,7 @@ def get_logger(inpath="tmp", file_name_prefix=""):
     logging_path = "{path}/{prefix}{now}.log".format(path=inpath, prefix=file_name_prefix, now=str(datetime.now()))
     level = logging.DEBUG
     format = '%(asctime)s  - %(pathname)s:%(lineno)s -  %(message)s'
-    #format = '%(asctime)s -  %(message)s'
+    # format = '%(asctime)s -  %(message)s'
 
     format = logging.Formatter(format)
     logger = logging.RootLogger(level)

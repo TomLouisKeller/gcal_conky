@@ -12,7 +12,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'gcal-conky'
+NAME = 'gcal_conky'
 DESCRIPTION = 'retrieve google calendar data and store it in a file'
 URL = ''
 EMAIL = 'me@tomlouiskeller.com'
