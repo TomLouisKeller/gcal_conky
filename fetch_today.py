@@ -93,7 +93,10 @@ def fetch_todays_events():
 
     output_string = ""
     for event in events:
-        output_string += replace_event_in_string(config.get('today')['event_format'], event, config)
+        if event.start < datetime.now(event.start.tzinfo) < event.end:
+            output_string += replace_event_in_string(config.get('today')['event_format_now'], event, config)
+        else:
+            output_string += replace_event_in_string(config.get('today')['event_format'], event, config)
 
     replace_text_in_file(output_path, config.get('today')['start_tag'], config.get('today')['end_tag'], output_string)
 

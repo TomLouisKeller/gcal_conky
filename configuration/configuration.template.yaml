@@ -15,7 +15,9 @@ today:
   end_tag: '#${gcal_end}'
   # placeholders are: `event_name`, `event_start`, `event_end`
   event_format: '${goto 50}{event_start} - {event_name}\n'
-  datetime_format: '%H:%M %d.%m'
+  # format for events which start before, and end after now
+  event_format_now: '${goto 50}${color3}{event_start} - {event_name}$color\n'
+  datetime_format: '%H:%M' # Python datetime format, eg: '%H:%M %d.%m'
 
 # Config files
 pickle_path: "configuration/credentials.pickle"
