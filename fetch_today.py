@@ -2,12 +2,14 @@ from __future__ import print_function
 from datetime import datetime, timedelta
 import pickle
 import os.path
+
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-from gcal_conky.helper import print_to_file, get_absolute_path
+from gcal_conky.helper import get_absolute_path, replace_text_in_file
 from gcal_conky.configuration import Configuration
+from gcal_conky.event import Event
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -56,12 +58,11 @@ def get_end_of_day(config: Configuration):
     return end
 
 
-def main():
+def fetch_todays_events():
 
     config = Configuration()
     creds = get_creds(config)
-    output_path = get_absolute_path(config.get('output_path'))
-    print("output_path ", output_path)
+    output_path = get_absolute_path(config.get('today')['output_path'])
 
     service = build('calendar', 'v3', credentials=creds)
 
@@ -77,23 +78,31 @@ def main():
                                               singleEvents=True,
                                               orderBy='startTime'
                                               ).execute()
-        events.extend(events_result.get('items', []))
+        for event in events_result.get('items', []):
+            event_start = event['start'].get('dateTime', event['start'].get('date'))
+            event_start = datetime.fromisoformat(event_start)
+            event_end = event['end'].get('dateTime', event['end'].get('date'))
+            event_end = datetime.fromisoformat(event_end)
+            events.append(Event(event['summary'], event_start, event_end))
 
     if not events:
-        print('No upcoming events found.')
+        replace_text_in_file(output_path, config.get('today')['start_tag'], config.get('today')['end_tag'], 'No upcoming events')
         exit(1)
-    else:
-        events = sorted(events, key=lambda e: e['start'].get('dateTime', e['start'].get('date')))
 
-    lines = []
+    events = sorted(events)
+
+    output_string = ""
     for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        start = datetime.fromisoformat(start)
-        start = start.strftime("%H:%M")
-        line = "{} - {}".format(start, event['summary'])
-        lines.append(line)
-    print_to_file(output_path, lines)
+        output_string += replace_event_in_string(config.get('today')['event_format'], event, config)
+
+    replace_text_in_file(output_path, config.get('today')['start_tag'], config.get('today')['end_tag'], output_string)
+
+
+def replace_event_in_string(source_string: str, event: Event, config: Configuration):
+    return source_string.replace('{event_name}', event.name) \
+                        .replace('{event_start}', event.start.strftime(config.get('today')['datetime_format'])) \
+                        .replace('{event_end}', event.end.strftime(config.get('today')['datetime_format']))
 
 
 if __name__ == '__main__':
-    main()
+    fetch_todays_events()

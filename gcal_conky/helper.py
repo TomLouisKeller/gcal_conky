@@ -1,4 +1,5 @@
 import os
+import re
 
 
 def get_current_location():
@@ -20,33 +21,35 @@ def get_absolute_path(filename: str):
         return os.path.join(get_current_location(), "../", filename)
 
 
-def get_logger(inpath="tmp", file_name_prefix=""):
-    from datetime import datetime
-    import logging
-    import sys
+def replace_text_in_file(file_path, start_tag, end_tag, output_string):
 
-    if file_name_prefix != "":
-        file_name_prefix += "-"
+    if file_path is None:
+        print("No `file_path` has been provided, therefore nothing can be stored")
+        return
 
-    logging_path = "{path}/{prefix}{now}.log".format(path=inpath, prefix=file_name_prefix, now=str(datetime.now()))
-    level = logging.DEBUG
-    format = '%(asctime)s  - %(pathname)s:%(lineno)s -  %(message)s'
-    # format = '%(asctime)s -  %(message)s'
+    if start_tag is None or end_tag is None:
+        start_tag = ""
+        end_tag = ""
+        print("start_tag and end_tag have not been provided. Therefore the entire file content will be replaced")
 
-    format = logging.Formatter(format)
-    logger = logging.RootLogger(level)
+    output_string = start_tag + '\n' + output_string + end_tag
 
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(format)
-    console_handler.setLevel(level)
-    logger.addHandler(console_handler)
+    # Read in the file
+    with open(file_path, 'r') as file:
+        filedata = file.read()
 
-    file_handler = logging.FileHandler(logging_path)
-    file_handler.setFormatter(format)
-    file_handler.setLevel(level)
-    logger.addHandler(file_handler)
+    # print(f"filedata {filedata}")
 
-    return logger
+    pattern = re.escape(start_tag) + ".*" + re.escape(end_tag)
+    replaced = re.sub(pattern, output_string, filedata, flags=re.DOTALL)
+
+    # print(f"replaced {replaced}")
+
+    # Write the file out again
+    with open(file_path, 'w') as file:
+        file.write(replaced)
+
+    return replaced
 
 
 def print_to_file(output_file_path, content: list):

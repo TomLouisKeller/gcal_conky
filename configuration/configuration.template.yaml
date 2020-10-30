@@ -1,9 +1,26 @@
+# offset from utc # yes, utc does not have daylight savings time - ever
 utc_offset: 1
 
-output_path: "output/gcal-conky-today.txt"
+# Add the `Calendar ID` of any calendar you'd like to show.
+# The `Calendar ID` can be found by clicking on the three dots next to the calendar in the google calendar user interface,
+# then click `settings and sharing` and copy paste the `Calendar ID`
+calendars:
+ - primary
 
+# By placing `#${gcal_start}` and `#${gcal_end}` in a file, the content between the two tags will be replaced
+# Without `start_tag` and `end_tag`, the whole file content will be replaced
+today:
+  output_path: 'output/gcal-conky-today.txt' 
+  start_tag: '#${gcal_start}'
+  end_tag: '#${gcal_end}'
+  # placeholders are: `event_name`, `event_start`, `event_end`
+  event_format: '${goto 50}{event_start} - {event_name}\n'
+  datetime_format: '%H:%M %d.%m'
+
+# Config files
 pickle_path: "configuration/credentials.pickle"
 credentials_path: "configuration/credentials.json"
 
-calendars:
- - primary
+## Google Calendar API Client Configuration
+client-id: ''
+project_id: ''
