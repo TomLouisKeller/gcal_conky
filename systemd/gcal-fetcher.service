@@ -4,5 +4,5 @@ Description=Fetch events from google calendar and store them in a file
 [Service]
 Type=simple
 Nice=10
-RuntimeMaxSec=60
-ExecStart=python /path/to/gcal-conky/gcal-conky/fetch_today.py
+RuntimeMaxSec=120
+ExecStart=python ~/software/gcal-conky/fetch_today.py
