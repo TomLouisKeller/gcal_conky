@@ -23,4 +23,4 @@ This is a hobby project.
 There will be bugs.  
 Use this project at your own risk.  
 I do not take any responsible for data loss or other damages.  
-Should something be unclear or you find bugs - open an issue on [GitHub](https://github.com/TomLouisKeller/asana_conky)
+Should something be unclear or you find bugs - open an issue on [GitHub](https://github.com/TomLouisKeller/gcal_conky)
