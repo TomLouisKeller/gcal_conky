@@ -1,5 +1,5 @@
 from __future__ import print_function
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pickle
 import os.path
 
@@ -81,14 +81,19 @@ def fetch_todays_events():
         for event in events_result.get('items', []):
             event_start = event['start'].get('dateTime', event['start'].get('date'))
             event_start = datetime.fromisoformat(event_start)
+            if event_start.tzinfo is None:
+                event_start = event_start.replace(tzinfo=timezone(timedelta(hours=config.get('utc_offset'))))
             event_end = event['end'].get('dateTime', event['end'].get('date'))
             event_end = datetime.fromisoformat(event_end)
+            if event_end.tzinfo is None:
+                event_end = event_end.replace(tzinfo=timezone(timedelta(hours=config.get('utc_offset'))))
             events.append(Event(event['summary'], event_start, event_end))
 
     if not events:
         replace_text_in_file(output_path, config.get('today')['start_tag'], config.get('today')['end_tag'], 'No upcoming events')
         exit(1)
 
+    # print('\n'.join(map(str, events)))
     events = sorted(events)
 
     output_string = ""
