@@ -10,3 +10,6 @@ class Event:
 
     def __lt__(self, other):
         return self.start < other.start
+
+    def __str__(self):
+        return f"{self.start}\t-\t{self.end}\t-\t{self.name}"
