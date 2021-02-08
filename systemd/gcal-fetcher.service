@@ -1,5 +1,7 @@
 [Unit]
 Description=Fetch events from google calendar and store them in a file
+After=network.target
+
 
 [Service]
 Type=simple
