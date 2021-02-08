@@ -98,9 +98,14 @@ def fetch_todays_events():
 
     output_string = ""
     for event in events:
-        if event.start < datetime.now(event.start.tzinfo) < event.end:
+        now = datetime.now(event.start.tzinfo)  # set now every time, since theoretically the timezone could differ from event to event.
+        if event.start < now < event.end:
             output_string += replace_event_in_string(config.get('today')['event_format_now'], event, config)
-        else:
+        elif event.end < now:
+            output_string += replace_event_in_string(config.get('today')['event_format_before'], event, config)
+        elif now < event.start:
+            output_string += replace_event_in_string(config.get('today')['event_format_after'], event, config)
+        else:  # shouldn't happen
             output_string += replace_event_in_string(config.get('today')['event_format'], event, config)
 
     replace_text_in_file(output_path, config.get('today')['start_tag'], config.get('today')['end_tag'], output_string)
